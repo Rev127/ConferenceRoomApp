@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ConferenceRoomAppAPI.Core/ConferenceRoomAppAPI.Services.csproj" />
+  <Project Path="ConferenceRoomAppAPI.Infrastructure/ConferenceRoomAppAPI.Data.csproj" />
+  <Project Path="ConferenceRoomAppAPI/ConferenceRoomAppAPI.csproj" />
+</Solution>
