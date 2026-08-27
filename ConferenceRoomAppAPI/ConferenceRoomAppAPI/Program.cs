@@ -31,11 +31,11 @@ namespace ConferenceRoomAppAPI
 
             // Register services
             builder.Services.AddScoped<ICurrentUserServices, CurrentUserServices>();
-            builder.Services.AddScoped<IHallsServices, HallsServices>();
-            builder.Services.AddScoped<IOrdersServices, OrderServices>();
-            builder.Services.AddScoped<IHallServicesServices, HallServicesServices>();
-            builder.Services.AddScoped<IUserServices, UserServices>();
-            builder.Services.AddScoped<IOrderReports, OrderServices>();
+            builder.Services.AddScoped<IHallsServices, HallsService>();
+            builder.Services.AddScoped<IOrdersServices, OrderService>();
+            builder.Services.AddScoped<IHallServices, HallsServices>();
+            builder.Services.AddScoped<IUserServices, UserService>();
+            builder.Services.AddScoped<IOrderReports, OrderService>();
 
             // Register discount rules and price calculator
             builder.Services.AddTransient<IPriceDiscountRules, MorningDiscountRule>();

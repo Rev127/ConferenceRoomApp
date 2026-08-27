@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceRoomAppAPI.Services.Services
 {
-    public class UserServices : IUserServices
+    public class UserService : IUserServices
     {
         private readonly ConferenceRoomContext _context;
-        public UserServices(ConferenceRoomContext context)
+        public UserService(ConferenceRoomContext context)
         {
             _context = context;
         }

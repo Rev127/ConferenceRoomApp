@@ -16,7 +16,7 @@ namespace ConferenceRoomAppAPI.Services.Tools
 
         public decimal CalculateDiscount(decimal basePrice)
         {
-            return basePrice * 0.85m;
+            return basePrice * 1.15m;
         }
     }
 }

@@ -4,6 +4,7 @@ using ConferenceRoomAppAPI.Services.Dtos;
 using ConferenceRoomAppAPI.Services.Dtos.OrderDtos;
 using ConferenceRoomAppAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ConferenceRoomAppAPI.Controllers
 {
@@ -23,8 +24,8 @@ namespace ConferenceRoomAppAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateConferenceRoom([FromBody] CreateHallDto createHallDto)
         {
-            await _hallsServices.CreateHallAsync(createHallDto);
-            return Created();
+            int hallId = await _hallsServices.CreateHallAsync(createHallDto);
+            return CreatedAtAction(nameof(CreateConferenceRoom), new { id = hallId, message = "Conference room created successfully" }, createHallDto);
         }
 
         [HttpPatch("update")]
@@ -57,6 +58,7 @@ namespace ConferenceRoomAppAPI.Controllers
             return Ok(availableRooms);
         }
 
+        [Authorize]
         [HttpPost("booking")]
         public async Task<IActionResult> BookConferenceRoom([FromBody] CreateOrderDto createOrderDto)
         {

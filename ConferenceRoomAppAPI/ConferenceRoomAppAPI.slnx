@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="ConferenceRoomAppAPI.Core/ConferenceRoomAppAPI.Services.csproj" />
   <Project Path="ConferenceRoomAppAPI.Infrastructure/ConferenceRoomAppAPI.Data.csproj" />
+  <Project Path="ConferenceRoomAppAPI.Services.Tests/ConferenceRoomAppAPI.Services.Tests.csproj" Id="8521cb3e-7d49-45c1-ba1e-75d330814ddc" />
   <Project Path="ConferenceRoomAppAPI/ConferenceRoomAppAPI.csproj" />
 </Solution>

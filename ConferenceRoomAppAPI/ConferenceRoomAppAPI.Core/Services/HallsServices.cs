@@ -1,167 +1,90 @@
-﻿using ConferenceRoomAppAPI.Services.Dtos.HallDtos;
+﻿using ConferenceRoomAppAPI.Services.Dtos.HallServicesDtos;
 using ConferenceRoomAppAPI.Services.Interfaces;
-using ConferenceRoomAppAPI.Data.Context;
 using ConferenceRoomAppAPI.Data.Models;
-using ConferenceRoomAppAPI.Services.Exceptions.HallExceptions;
+using ConferenceRoomAppAPI.Data.Context;
 using ConferenceRoomAppAPI.Services.Exceptions.HallServicesExceptions;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using ConferenceRoomAppAPI.Services.Dtos.HallServicesDtos;
 
 namespace ConferenceRoomAppAPI.Services.Services
 {
-    public class HallsServices : IHallsServices
+    public class HallsServices : IHallServices
     {
         private readonly ConferenceRoomContext _context;
-        private readonly IHallServicesServices _hallServicesServices;
-
-        public HallsServices(ConferenceRoomContext context, IHallServicesServices hallServicesServices)
+        public HallsServices(ConferenceRoomContext context)
         {
             _context = context;
-            _hallServicesServices = hallServicesServices;
         }
 
-        private async Task<Halls> GetHallByIdInternalAsync(int hallId)
+        private async Task<HallServices> GetHallServicesByIdInternalAsync(int hallServicesId)
         {
-            var hall = await _context.Halls
-                .Include(h => h.Services)
-                .FirstOrDefaultAsync(h => h.Id == hallId);
-
-            if (hall is null)
-            {
-                throw new HallNotExistsException(hallId);
-            }
-
-            return hall;
-        }
-
-        private async Task<List<GetHallServicesDto>> GetExistingHallServices(CreateHallDto hallDto)
-        {
-            var hallServices = hallDto.HallServices.ToList();
-            var allServices = await _hallServicesServices.GetAllHallServicesAsync();
-
-            return allServices
-                .Where(s => hallServices.Any(hs => hs.Name == s.Name && hs.Price == s.Price))
-                .ToList();
-        }
-
-        private async Task<List<GetHallServicesDto>> GetExistingHallServices(UpdateHallDto hallDto)
-        {
-            var hallServices = hallDto.HallServices.ToList();
-            var allServices = await _hallServicesServices.GetAllHallServicesAsync();
-
-            return allServices
-                .Where(s => hallServices.Any(hs => hs.Name == s.Name && hs.Price == s.Price))
-                .ToList();
-        }
-
-        private GetHallDto GetHallDtoInternal(Halls hall)
-        {
-            var hallServicesIds = hall.Services.Select(s => s.Id).ToList() ?? new List<int>();
-            return new GetHallDto
-            {
-                Id = hall.Id,
-                Name = hall.Name,
-                Capacity = hall.Capacity,
-                PricePerHour = hall.PricePerHour,
-                HallServicesIds = hallServicesIds
-            };
-        }
-
-        public async Task CreateHallAsync(CreateHallDto hallDto)
-        {
-            var existingHall = _context.Halls.FirstOrDefault(h => h.Name == hallDto.Name);
-
-            // Check if a hall with the same name already exists
-            if (existingHall is not null)
-            {
-                throw new HallAlreadyExistsException(hallDto.Name);
-            }
-
-            // Check if the provided hall services exist in the database
-            var existingServices = await this.GetExistingHallServices(hallDto);
-
-            if (!existingServices.Any())
+            var hallServices = await _context.HallServices.FindAsync(hallServicesId);
+            if (hallServices is null)
             {
                 throw new HallServicesNotExistsException();
             }
+            return hallServices;
+        }
 
-            var hall = new Halls
+        public async Task CreateHallServicesAsync(CreateHallServicesDto hallServicesDto)
+        {
+            var hallServices = new HallServices
             {
-                Name = hallDto.Name,
-                Capacity = hallDto.Capacity,
-                PricePerHour = hallDto.PricePerHour,
-                Services = await _context.HallServices
-                    .Where(s => existingServices.Select(es => es.Id).Contains(s.Id))
-                    .ToListAsync()
+                Name = hallServicesDto.Name,
+                Price = hallServicesDto.Price
             };
 
-
-            await _context.Halls.AddAsync(hall);
+            await _context.HallServices.AddAsync(hallServices);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteHallAsync(int hallId)
+        public async Task DeleteHallServicesAsync(int hallServicesId)
         {
-            var hall = await this.GetHallByIdInternalAsync(hallId);
+            var hallServices = await this.GetHallServicesByIdInternalAsync(hallServicesId);
 
-             _context.Halls.Remove(hall);
+            _context.HallServices.Remove(hallServices);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<GetHallDto>> GetAllHallsAsync()
+        public async Task<List<GetHallServicesDto>> GetAllHallServicesAsync()
         {
-            var halls = await _context.Halls.Include(h => h.Services).ToListAsync();
-            return halls.Select(h => this.GetHallDtoInternal(h)).ToList();
+            return await _context.HallServices.Select(hs => new GetHallServicesDto
+            {
+                Id = hs.Id,
+                Name = hs.Name,
+                Price = hs.Price
+            }).ToListAsync();
         }
 
-        public async Task<GetHallDto> GetHallByIdAsync(int hallId)
+        public async Task<GetHallServicesDto> GetHallServicesByIdAsync(int hallServicesId)
         {
-            var hall = await this.GetHallByIdInternalAsync(hallId);
+            var hallServices = await this.GetHallServicesByIdInternalAsync(hallServicesId);
 
-            return this.GetHallDtoInternal(hall);
+            return new GetHallServicesDto
+            {
+                Id = hallServices.Id,
+                Name = hallServices.Name,
+                Price = hallServices.Price
+            };
         }
 
-        public async Task UpdateHallAsync(UpdateHallDto hallDto)
+        public async Task UpdateHallServicesAsync(UpdateHallServicesDto hallServicesDto)
         {
-            var hall = await this.GetHallByIdInternalAsync(hallDto.Id);
+            var hallServices = await this.GetHallServicesByIdInternalAsync(hallServicesDto.Id);
 
-            // Update the capacity if provided
-            if (hallDto.Capacity is not null || hallDto.Capacity != 0)
+            if (hallServicesDto.Name is not null)
             {
-                hall.Capacity = hallDto.Capacity.Value;
+                hallServices.Name = hallServicesDto.Name;
             }
 
-            // Update the name if provided
-            if (!string.IsNullOrEmpty(hallDto.Name))
+            if (hallServicesDto.Price is not null)
             {
-                hall.Name = hallDto.Name;
+                hallServices.Price = hallServicesDto.Price.Value;
             }
 
-            // Update the price per hour if provided
-            if (hallDto.PricePerHour is not null || hallDto.PricePerHour != 0)
-            {
-                hall.PricePerHour = hallDto.PricePerHour.Value;
-            }
-
-            // Update the hall services if provided
-            var existingServices = await this.GetExistingHallServices(hallDto);
-
-            if (existingServices.Any())
-            {
-                hall.Services = existingServices.Select(s => new HallServices
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Price = s.Price
-                }).ToList();
-            }
-
-            _context.Halls.Update(hall);
+            _context.HallServices.Update(hallServices);
             await _context.SaveChangesAsync();
+        }
+
         
-        }
-
-
     }
 }

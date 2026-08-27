@@ -7,7 +7,7 @@ namespace ConferenceRoomAppAPI.Services.Tools
     {
         public bool IsMatch(TimeSlot slot)
         {
-            if(slot.StartTime.Hour >= 9 && slot.EndTime.Hour <= 18)
+            if((slot.StartTime.Hour >= 9 && slot.EndTime.Hour <= 12) || (slot.StartTime.Hour >= 14 && slot.EndTime.Hour <= 18))
             {
                 return true;
             }

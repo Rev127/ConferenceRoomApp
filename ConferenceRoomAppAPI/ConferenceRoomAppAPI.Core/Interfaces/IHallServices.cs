@@ -2,7 +2,7 @@
 
 namespace ConferenceRoomAppAPI.Services.Interfaces
 {
-    public interface IHallServicesServices
+    public interface IHallServices
     {
         public Task<GetHallServicesDto> GetHallServicesByIdAsync(int hallServicesId);
         public Task<List<GetHallServicesDto>> GetAllHallServicesAsync();

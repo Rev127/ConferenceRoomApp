@@ -6,7 +6,7 @@ namespace ConferenceRoomAppAPI.Services.Interfaces
     {
         public Task<GetHallDto> GetHallByIdAsync(int hallId);
         public Task<List<GetHallDto>> GetAllHallsAsync();
-        public Task CreateHallAsync(CreateHallDto hallDto);
+        public Task<int> CreateHallAsync(CreateHallDto hallDto);
         public Task UpdateHallAsync(UpdateHallDto hallDto);
         public Task DeleteHallAsync(int hallId);
 

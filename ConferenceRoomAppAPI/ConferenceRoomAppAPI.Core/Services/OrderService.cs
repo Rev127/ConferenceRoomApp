@@ -12,14 +12,14 @@ using ConferenceRoomAppAPI.Services.Dtos.HallDtos;
 
 namespace ConferenceRoomAppAPI.Services.Services
 {
-    public class OrderServices : IOrdersServices, IOrderReports
+    public class OrderService : IOrdersServices, IOrderReports
     {
         private readonly ConferenceRoomContext _context;
         private readonly IHallsServices _hallServices;
         private readonly IPriceCalculator _priceCalculator;
-        private readonly IHallServicesServices _hallServicesServices;
+        private readonly IHallServices _hallServicesServices;
         private readonly ICurrentUserServices _currentUserServices;
-        public OrderServices(ConferenceRoomContext context, IHallsServices hallServices, IPriceCalculator priceCalculator, IHallServicesServices hallServicesServices, ICurrentUserServices currentUserServices)
+        public OrderService(ConferenceRoomContext context, IHallsServices hallServices, IPriceCalculator priceCalculator, IHallServices hallServicesServices, ICurrentUserServices currentUserServices)
         {
             _context = context;
             _hallServices = hallServices;
